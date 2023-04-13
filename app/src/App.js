@@ -7,7 +7,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import ChatListItem from "./components/ChatListItem/ChatListItem";
 
 const App = () => {
-    const [chatList, setChatList] = React.useState([{}, {}, {}, {}]);
+    const [chatList, setChatList] = React.useState([{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}]);
 
     return (
         <div className="app-window">
