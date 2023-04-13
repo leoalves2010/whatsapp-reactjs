@@ -11,22 +11,22 @@ import ChatWindow from "./components/ChatWindow";
 const App = () => {
     const [chatList, setChatList] = React.useState([
         {
-            chatId: 1,
+            chatId: 0,
             name: "Fulando de Tal 1",
             image: "https://www.w3schools.com/howto/img_avatar2.png",
         },
         {
-            chatId: 2,
+            chatId: 1,
             name: "Fulando de Tal 2",
             image: "https://www.w3schools.com/howto/img_avatar2.png",
         },
         {
-            chatId: 3,
+            chatId: 2,
             name: "Fulando de Tal 3",
             image: "https://www.w3schools.com/howto/img_avatar2.png",
         },
         {
-            chatId: 4,
+            chatId: 3,
             name: "Fulando de Tal 4",
             image: "https://www.w3schools.com/howto/img_avatar2.png",
         },
@@ -70,6 +70,8 @@ const App = () => {
                     {chatList.map((chat, key) => (
                         <ChatListItem
                             key={key}
+                            data={chat}
+                            active={activeChat.chatId === key}
                             onClick={() => setActiveChat(chatList[key])}
                         />
                     ))}
