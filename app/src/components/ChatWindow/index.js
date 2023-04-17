@@ -10,9 +10,31 @@ import CloseIcon from "@mui/icons-material/Close";
 import EmojiPicker from "emoji-picker-react";
 
 const ChatWindow = () => {
+    const recognitionSvc =
+        window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new recognitionSvc();
     const [emojiOpen, setEmojiOpen] = React.useState(false);
+    const [listening, setListening] = React.useState(false);
+    const [message, setMessage] = React.useState("");
 
-    const handleEmojiClick = () => {};
+    const handleEmojiClick = (event) => {
+        setMessage(message + event.emoji);
+    };
+
+    const handleClickMic = () => {
+        recognition.onstart = () => {
+            setListening(true);
+        };
+
+        recognition.onend = () => {
+            setListening(false);
+        };
+
+        recognition.onresult = (event) => {
+            setMessage(event.results[0][0].transcript);
+        };
+        recognition.start();
+    };
 
     return (
         <div className="chatWindow">
@@ -73,12 +95,29 @@ const ChatWindow = () => {
                         type="text"
                         className="chatWindow-input"
                         placeholder="Digite uma mensagem..."
+                        value={message}
+                        onChange={({ target }) => setMessage(target.value)}
                     />
                 </div>
                 <div className="chatWindow-right">
-                    <div className="chatWindow-btn">
-                        <SendIcon style={{ color: "#919191" }} />
-                    </div>
+                    {message === "" && (
+                        <div
+                            className="chatWindow-btn"
+                            onClick={handleClickMic}
+                        >
+                            <MicIcon
+                                style={{
+                                    color: listening ? "#009688" : "#919191",
+                                }}
+                            />
+                        </div>
+                    )}
+
+                    {message !== "" && (
+                        <div className="chatWindow-btn">
+                            <SendIcon style={{ color: "#919191" }} />
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
