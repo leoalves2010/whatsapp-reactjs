@@ -8,14 +8,175 @@ import SendIcon from "@mui/icons-material/Send";
 import MicIcon from "@mui/icons-material/Mic";
 import CloseIcon from "@mui/icons-material/Close";
 import EmojiPicker from "emoji-picker-react";
+import MessageItem from "../MessageItem";
 
-const ChatWindow = () => {
+const ChatWindow = ({ user }) => {
     const recognitionSvc =
         window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = new recognitionSvc();
+    const body = React.useRef(null);
     const [emojiOpen, setEmojiOpen] = React.useState(false);
     const [listening, setListening] = React.useState(false);
     const [message, setMessage] = React.useState("");
+    const [listMessages, setListMessages] = React.useState([
+        {
+            author: 123,
+            body: "bla bla bla",
+            date: "19:00",
+        },
+        {
+            author: 123,
+            body: "bla bla bla bla",
+            date: "19:18",
+        },
+        {
+            author: 1234,
+            body: "bla bla",
+            date: "19:30",
+        },
+        {
+            author: 123,
+            body: "bla bla bla",
+            date: "19:00",
+        },
+        {
+            author: 123,
+            body: "bla bla bla bla",
+            date: "19:18",
+        },
+        {
+            author: 1234,
+            body: "bla bla",
+            date: "19:30",
+        },
+        {
+            author: 123,
+            body: "bla bla bla",
+            date: "19:00",
+        },
+        {
+            author: 123,
+            body: "bla bla bla bla",
+            date: "19:18",
+        },
+        {
+            author: 1234,
+            body: "bla bla",
+            date: "19:30",
+        },
+        {
+            author: 123,
+            body: "bla bla bla",
+            date: "19:00",
+        },
+        {
+            author: 123,
+            body: "bla bla bla bla",
+            date: "19:18",
+        },
+        {
+            author: 1234,
+            body: "bla bla",
+            date: "19:30",
+        },
+        {
+            author: 123,
+            body: "bla bla bla",
+            date: "19:00",
+        },
+        {
+            author: 123,
+            body: "bla bla bla bla",
+            date: "19:18",
+        },
+        {
+            author: 1234,
+            body: "bla bla",
+            date: "19:30",
+        },
+        {
+            author: 123,
+            body: "bla bla bla",
+            date: "19:00",
+        },
+        {
+            author: 123,
+            body: "bla bla bla bla",
+            date: "19:18",
+        },
+        {
+            author: 1234,
+            body: "bla bla",
+            date: "19:30",
+        },
+        {
+            author: 123,
+            body: "bla bla bla",
+            date: "19:00",
+        },
+        {
+            author: 123,
+            body: "bla bla bla bla",
+            date: "19:18",
+        },
+        {
+            author: 1234,
+            body: "bla bla",
+            date: "19:30",
+        },
+        {
+            author: 123,
+            body: "bla bla bla",
+            date: "19:00",
+        },
+        {
+            author: 123,
+            body: "bla bla bla bla",
+            date: "19:18",
+        },
+        {
+            author: 1234,
+            body: "bla bla",
+            date: "19:30",
+        },
+        {
+            author: 123,
+            body: "bla bla bla",
+            date: "19:00",
+        },
+        {
+            author: 123,
+            body: "bla bla bla bla",
+            date: "19:18",
+        },
+        {
+            author: 1234,
+            body: "bla bla",
+            date: "19:30",
+        },
+        {
+            author: 123,
+            body: "bla bla bla",
+            date: "19:00",
+        },
+        {
+            author: 123,
+            body: "bla bla bla bla",
+            date: "19:18",
+        },
+        {
+            author: 1234,
+            body: "bla bla",
+            date: "19:30",
+        },
+    ]);
+
+    React.useEffect(() => {
+        if (body.current.scrollHeight > body.current.offsetHeight) {
+            body.current.scrollTop =
+                body.current.scrollHeight - body.current.offsetHeight;
+        }
+    }, [listMessages]);
 
     const handleEmojiClick = (event) => {
         setMessage(message + event.emoji);
@@ -59,7 +220,11 @@ const ChatWindow = () => {
                     </div>
                 </div>
             </div>
-            <div className="chatWindow-body"></div>
+            <div className="chatWindow-body" ref={body}>
+                {listMessages.map((message, key) => (
+                    <MessageItem key={key} message={message} user={user} />
+                ))}
+            </div>
             <div
                 className="chatWindow-emojiArea"
                 style={{ height: emojiOpen ? "250px" : "0px" }}

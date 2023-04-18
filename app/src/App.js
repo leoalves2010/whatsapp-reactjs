@@ -32,6 +32,11 @@ const App = () => {
         },
     ]);
     const [activeChat, setActiveChat] = React.useState({});
+    const [user, setUser] = React.useState({
+        id: 1234,
+        avatar: "https://www.w3schools.com/howto/img_avatar2.png",
+        name: "Leonardo Dvulatk",
+    });
 
     return (
         <div className="app-window">
@@ -39,8 +44,8 @@ const App = () => {
                 <header>
                     <img
                         className="header--avatar"
-                        src="https://www.w3schools.com/howto/img_avatar2.png"
-                        alt="Avatar"
+                        src={user.avatar}
+                        alt={user.name}
                     />
                     <div className="header--buttons">
                         <div className="header--btn">
@@ -78,7 +83,7 @@ const App = () => {
                 </div>
             </div>
             <div className="content-area">
-                {activeChat.chatId !== undefined && <ChatWindow />}
+                {activeChat.chatId !== undefined && <ChatWindow user={user} />}
                 {activeChat.chatId === undefined && <ChatIntro />}
             </div>
         </div>
