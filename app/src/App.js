@@ -8,37 +8,26 @@ import ChatListItem from "./components/ChatListItem";
 import ChatIntro from "./components/ChatIntro";
 import ChatWindow from "./components/ChatWindow";
 import NewChat from "./components/NewChat";
+import Login from "./components/Login";
+import { Api } from "./Api";
 
 const App = () => {
-    const [chatList, setChatList] = React.useState([
-        {
-            chatId: 0,
-            name: "Fulando de Tal 1",
-            image: "https://www.w3schools.com/howto/img_avatar2.png",
-        },
-        {
-            chatId: 1,
-            name: "Fulando de Tal 2",
-            image: "https://www.w3schools.com/howto/img_avatar2.png",
-        },
-        {
-            chatId: 2,
-            name: "Fulando de Tal 3",
-            image: "https://www.w3schools.com/howto/img_avatar2.png",
-        },
-        {
-            chatId: 3,
-            name: "Fulando de Tal 4",
-            image: "https://www.w3schools.com/howto/img_avatar2.png",
-        },
-    ]);
+    const [chatList, setChatList] = React.useState([]);
     const [activeChat, setActiveChat] = React.useState({});
-    const [user, setUser] = React.useState({
-        id: 1234,
-        avatar: "https://www.w3schools.com/howto/img_avatar2.png",
-        name: "Leonardo Dvulatk",
-    });
+    const [user, setUser] = React.useState(null);
     const [showNewChat, setShowNewChat] = React.useState(false);
+
+    const handleLoginData = async ({ user }) => {
+        let newUser = {
+            id: user.uid,
+            name: user.displayName,
+            avatar: user.photoURL,
+        };
+        await Api.addUser(newUser);
+        setUser(newUser);
+    };
+
+    if (user === null) return <Login handleLoginData={handleLoginData} />;
 
     return (
         <div className="app-window">
