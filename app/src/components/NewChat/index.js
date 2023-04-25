@@ -6,6 +6,11 @@ import { Api } from "../../Api";
 const NewChat = ({ user, chatList, showNewChat, setShowNewChat }) => {
     const [contactList, setContactList] = React.useState([]);
 
+    const addNewChat = async (user2) => {
+        await Api.addNewChat(user, user2);
+        setShowNewChat(false);
+    };
+
     React.useEffect(() => {
         const getUserList = async () => {
             if (user !== null) {
@@ -29,7 +34,11 @@ const NewChat = ({ user, chatList, showNewChat, setShowNewChat }) => {
             </div>
             <div className="newChat-list">
                 {contactList.map((contact, key) => (
-                    <div className="newChat-item" key={key}>
+                    <div
+                        onClick={() => addNewChat(contact)}
+                        className="newChat-item"
+                        key={key}
+                    >
                         <img
                             className="newChat-itemavatar"
                             src={contact.avatar}

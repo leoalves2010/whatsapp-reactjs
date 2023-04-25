@@ -5,6 +5,10 @@ import {
     setDoc,
     collection,
     getDocs,
+    updateDoc,
+    arrayUnion,
+    addDoc,
+    onSnapshot,
 } from "firebase/firestore";
 import firebaseConfig from "./firebaseConfig";
 import { getAuth, signInWithPopup, FacebookAuthProvider } from "firebase/auth";
@@ -47,5 +51,42 @@ export const Api = {
         });
 
         return userList;
+    },
+    addNewChat: async (user, user2) => {
+        try {
+            const newChat = await addDoc(collection(db, "chats"), {
+                messages: [],
+                users: [user.id, user2.id],
+            });
+
+            await updateDoc(doc(db, "users", user.id), {
+                chats: arrayUnion({
+                    chatId: newChat.id,
+                    image: user2.avatar,
+                    title: user2.name,
+                    with: user2.id,
+                }),
+            });
+
+            await updateDoc(doc(db, "users", user2.id), {
+                chats: arrayUnion({
+                    chatId: newChat.id,
+                    image: user.avatar,
+                    title: user.name,
+                    with: user.id,
+                }),
+            });
+        } catch (error) {
+            console.log("Erro: " + error);
+        }
+    },
+    onChatList: (userId, setChatList) => {
+        return onSnapshot(doc(db, "users", userId), (doc) => {
+            if (doc.exists) {
+                if (doc.data().chats) {
+                    setChatList(doc.data().chats);
+                }
+            }
+        });
     },
 };
