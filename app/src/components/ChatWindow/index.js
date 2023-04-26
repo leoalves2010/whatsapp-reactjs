@@ -9,8 +9,9 @@ import MicIcon from "@mui/icons-material/Mic";
 import CloseIcon from "@mui/icons-material/Close";
 import EmojiPicker from "emoji-picker-react";
 import MessageItem from "../MessageItem";
+import { Api } from "../../Api";
 
-const ChatWindow = ({ user }) => {
+const ChatWindow = ({ user, data }) => {
     const recognitionSvc =
         window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = new recognitionSvc();
@@ -18,158 +19,8 @@ const ChatWindow = ({ user }) => {
     const [emojiOpen, setEmojiOpen] = React.useState(false);
     const [listening, setListening] = React.useState(false);
     const [message, setMessage] = React.useState("");
-    const [listMessages, setListMessages] = React.useState([
-        {
-            author: 123,
-            body: "bla bla bla",
-            date: "19:00",
-        },
-        {
-            author: 123,
-            body: "bla bla bla bla",
-            date: "19:18",
-        },
-        {
-            author: 1234,
-            body: "bla bla",
-            date: "19:30",
-        },
-        {
-            author: 123,
-            body: "bla bla bla",
-            date: "19:00",
-        },
-        {
-            author: 123,
-            body: "bla bla bla bla",
-            date: "19:18",
-        },
-        {
-            author: 1234,
-            body: "bla bla",
-            date: "19:30",
-        },
-        {
-            author: 123,
-            body: "bla bla bla",
-            date: "19:00",
-        },
-        {
-            author: 123,
-            body: "bla bla bla bla",
-            date: "19:18",
-        },
-        {
-            author: 1234,
-            body: "bla bla",
-            date: "19:30",
-        },
-        {
-            author: 123,
-            body: "bla bla bla",
-            date: "19:00",
-        },
-        {
-            author: 123,
-            body: "bla bla bla bla",
-            date: "19:18",
-        },
-        {
-            author: 1234,
-            body: "bla bla",
-            date: "19:30",
-        },
-        {
-            author: 123,
-            body: "bla bla bla",
-            date: "19:00",
-        },
-        {
-            author: 123,
-            body: "bla bla bla bla",
-            date: "19:18",
-        },
-        {
-            author: 1234,
-            body: "bla bla",
-            date: "19:30",
-        },
-        {
-            author: 123,
-            body: "bla bla bla",
-            date: "19:00",
-        },
-        {
-            author: 123,
-            body: "bla bla bla bla",
-            date: "19:18",
-        },
-        {
-            author: 1234,
-            body: "bla bla",
-            date: "19:30",
-        },
-        {
-            author: 123,
-            body: "bla bla bla",
-            date: "19:00",
-        },
-        {
-            author: 123,
-            body: "bla bla bla bla",
-            date: "19:18",
-        },
-        {
-            author: 1234,
-            body: "bla bla",
-            date: "19:30",
-        },
-        {
-            author: 123,
-            body: "bla bla bla",
-            date: "19:00",
-        },
-        {
-            author: 123,
-            body: "bla bla bla bla",
-            date: "19:18",
-        },
-        {
-            author: 1234,
-            body: "bla bla",
-            date: "19:30",
-        },
-        {
-            author: 123,
-            body: "bla bla bla",
-            date: "19:00",
-        },
-        {
-            author: 123,
-            body: "bla bla bla bla",
-            date: "19:18",
-        },
-        {
-            author: 1234,
-            body: "bla bla",
-            date: "19:30",
-        },
-        {
-            author: 123,
-            body: "bla bla bla",
-            date: "19:00",
-        },
-        {
-            author: 123,
-            body: "bla bla bla bla",
-            date: "19:18",
-        },
-        {
-            author: 1234,
-            body: "bla bla",
-            date: "19:30",
-        },
-    ]);
+    const [listMessages, setListMessages] = React.useState([]);
+    const [users, setUsers] = React.useState([]);
 
     React.useEffect(() => {
         if (body.current.scrollHeight > body.current.offsetHeight) {
@@ -178,8 +29,26 @@ const ChatWindow = ({ user }) => {
         }
     }, [listMessages]);
 
+    React.useEffect(() => {
+        setListMessages([]);
+        const unsub = Api.onChatContent(data.chatId, setListMessages, setUsers);
+        return unsub;
+    }, [data.chatId]);
+
     const handleEmojiClick = (event) => {
         setMessage(message + event.emoji);
+    };
+
+    const handleInputKeyUp = (e) => {
+        if (e.keyCode === 13) handleSendClick();
+    };
+
+    const handleSendClick = async () => {
+        if (message !== "") {
+            await Api.sendMessage(data.chatId, user.id, "text", message, users);
+            setMessage("");
+            setEmojiOpen(false);
+        }
     };
 
     const handleClickMic = () => {
@@ -203,10 +72,10 @@ const ChatWindow = ({ user }) => {
                 <div className="chatWindow-headerinfo">
                     <img
                         className="chatWindow-avatar"
-                        src="https://www.w3schools.com/howto/img_avatar2.png"
-                        alt=""
+                        src={data.image}
+                        alt={data.title}
                     />
-                    <div className="chatWindow-name">Leonardo Dvulatk</div>
+                    <div className="chatWindow-name">{data.title}</div>
                 </div>
                 <div className="chatWindow-headerbuttons">
                     <div className="chatWindow-btn">
@@ -262,6 +131,7 @@ const ChatWindow = ({ user }) => {
                         placeholder="Digite uma mensagem..."
                         value={message}
                         onChange={({ target }) => setMessage(target.value)}
+                        onKeyUp={handleInputKeyUp}
                     />
                 </div>
                 <div className="chatWindow-right">
@@ -279,7 +149,10 @@ const ChatWindow = ({ user }) => {
                     )}
 
                     {message !== "" && (
-                        <div className="chatWindow-btn">
+                        <div
+                            className="chatWindow-btn"
+                            onClick={handleSendClick}
+                        >
                             <SendIcon style={{ color: "#919191" }} />
                         </div>
                     )}

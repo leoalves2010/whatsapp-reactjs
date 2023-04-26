@@ -90,7 +90,9 @@ const App = () => {
                 </div>
             </div>
             <div className="content-area">
-                {activeChat.chatId !== undefined && <ChatWindow user={user} />}
+                {activeChat.chatId !== undefined && (
+                    <ChatWindow user={user} data={activeChat} />
+                )}
                 {activeChat.chatId === undefined && <ChatIntro />}
             </div>
         </div>

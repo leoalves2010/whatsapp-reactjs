@@ -5,6 +5,7 @@ import {
     setDoc,
     collection,
     getDocs,
+    getDoc,
     updateDoc,
     arrayUnion,
     addDoc,
@@ -88,5 +89,45 @@ export const Api = {
                 }
             }
         });
+    },
+    onChatContent: (chatId, setListMessages, setUsers) => {
+        return onSnapshot(doc(db, "chats", chatId), (doc) => {
+            if (doc.exists) {
+                if (doc.data().messages) {
+                    setListMessages(doc.data().messages);
+                    setUsers(doc.data().users);
+                }
+            }
+        });
+    },
+    sendMessage: async (chatId, userId, type, body, users) => {
+        let now = new Date();
+
+        await updateDoc(doc(db, "chats", chatId), {
+            messages: arrayUnion({
+                author: userId,
+                type,
+                body,
+                date: now,
+            }),
+        });
+
+        for (const i in users) {
+            const u = await getDoc(doc(db, "users", users[i]));
+            const uData = u.data();
+            if (uData.chats) {
+                const chats = [...uData.chats];
+                for (const e in chats) {
+                    if (chats[e].chatId === chatId) {
+                        chats[e].lastMessage = body;
+                        chats[e].lastDateMessage = now;
+                    }
+                }
+
+                await updateDoc(doc(db, "users", users[i]), {
+                    chats,
+                });
+            }
+        }
     },
 };
