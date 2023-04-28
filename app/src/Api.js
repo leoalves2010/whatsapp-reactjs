@@ -85,7 +85,26 @@ export const Api = {
         return onSnapshot(doc(db, "users", userId), (doc) => {
             if (doc.exists) {
                 if (doc.data().chats) {
-                    setChatList(doc.data().chats);
+                    const chats = [...doc.data().chats];
+
+                    chats.sort((a, b) => {
+                        if (
+                            a.lastDateMessage === undefined ||
+                            b.lastDateMessage === undefined
+                        ) {
+                            return -1;
+                        }
+
+                        if (
+                            a.lastDateMessage.seconds <
+                            b.lastDateMessage.seconds
+                        ) {
+                            return 1;
+                        } else {
+                            return -1;
+                        }
+                    });
+                    setChatList(chats);
                 }
             }
         });
